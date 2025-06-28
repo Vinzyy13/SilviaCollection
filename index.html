@@ -27,6 +27,21 @@
                      fontFamily: {
                         'sans': ['Poppins', 'sans-serif'],
                         'display': ['Pacifico', 'cursive'],
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseFade: {
+                          '0%': { transform: 'scale(1)', opacity: '1' },
+                          '50%': { transform: 'scale(1.1)', opacity: '0.7' },
+                          '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-fade': 'pulseFade 0.4s ease-in-out',
                     }
                 }
             }
@@ -51,22 +66,23 @@
             -webkit-backdrop-filter: blur(8px);
             background-color: rgba(255, 255, 255, 0.8);
         }
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            bottom: -4px;
-            left: 0;
-            background-color: #FF69B4;
+        .nav-link.active {
+            color: #FF69B4; /* Accent color for active link */
         }
         .hero-overlay {
             background: linear-gradient(90deg, rgba(248,248,248,1) 0%, rgba(248,248,248,0.8) 40%, rgba(248,248,248,0) 100%);
         }
         .size-btn.active {
-            background-color: #FF69B4;
             color: white;
-            border-color: #FF69B4;
+            transition: color 0.2s ease-in-out;
+        }
+        .category-btn { 
+            border: 1px solid #E6E6E6; 
+        }
+        .category-btn.active { 
+            background-color: #FF69B4; 
+            color: white; 
+            border-color: #FF69B4; 
         }
     </style>
 </head>
@@ -82,7 +98,7 @@
 
             <!-- Center: Desktop Navigation Links -->
             <div class="hidden md:flex items-center space-x-8">
-                <a href="#home" class="nav-link relative text-gray-800 hover:text-accent font-medium transition-all" data-page="home">Home</a>
+                <a href="#home" class="nav-link relative text-gray-800 hover:text-accent font-medium transition-colors" data-page="home">Home</a>
                 <a href="#shop" class="nav-link relative text-gray-800 hover:text-accent font-medium transition-all" data-page="shop">Shop</a>
                 <a href="#contact" class="nav-link relative text-gray-800 hover:text-accent font-medium transition-all" data-page="contact">Contact Us</a>
             </div>
@@ -117,7 +133,7 @@
         <!-- =========== HOME PAGE =========== -->
         <section id="page-home" class="page">
             <!-- Hero Section -->
-            <div class="hero-section w-full h-[600px] bg-cover bg-center" style="background-image: url('https://readdy.ai/api/search-image?query=elegant%20fashion%20model%20wearing%20pink%20modest%20clothing%20standing%20in%20a%20minimalist%20studio%20with%20soft%20lighting%2C%20professional%20fashion%20photography%20with%20clean%20background%2C%20high-end%20fashion%20catalog%20style%2C%20the%20left%20side%20has%20a%20clean%20white%20background%20for%20text%20placement&width=1920&height=1080&seq=1&orientation=landscape')">
+            <div class="hero-section w-full h-[600px] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1552874869-5c39EC9288dc?q=80&w=1974&auto=format&fit=crop')">
                 <div class="hero-overlay w-full h-full flex items-center">
                     <div class="container mx-auto px-4">
                         <div class="max-w-xl">
@@ -164,10 +180,25 @@
 
         <!-- =========== SHOP PAGE =========== -->
         <section id="page-shop" class="page hidden container mx-auto px-4 sm:px-6 py-16">
-            <h2 class="text-3xl font-bold text-center mb-12">Our Collection</h2>
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <h2 class="text-3xl font-bold text-center mb-4">Our Collection</h2>
+            <p class="text-center text-gray-600 mb-8">Browse our curated selection of quality fashion items.</p>
+
+             <!-- Filters and Search -->
+            <div class="flex flex-col md:flex-row gap-4 mb-8">
+                <div class="relative flex-grow">
+                    <input type="search" id="search-input" placeholder="Search for items..." class="w-full pl-10 pr-4 py-2 border border-lightgray rounded-button focus:outline-none focus:border-accent">
+                    <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <button id="filter-modal-button" class="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-lightgray rounded-button text-gray-700 hover:bg-lightgray transition-colors">
+                    <i class="ri-filter-3-line"></i>
+                    <span>Filters</span>
+                </button>
+            </div>
+
+            <div id="product-grid" class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 sm:gap-8">
                 <!-- Product cards will be injected here by JavaScript -->
             </div>
+            <p id="no-results-message" class="hidden text-center text-gray-500 py-16">No products found. Try a different search or filter.</p>
         </section>
 
         <!-- =========== CART PAGE =========== -->
@@ -265,6 +296,69 @@
 
     </main>
 
+     <!-- Filter Modal -->
+    <div id="filter-modal" class="hidden fixed inset-0 z-[60] bg-black/50 flex justify-end" aria-labelledby="filter-heading">
+        <div id="filter-panel" class="w-full max-w-md h-full bg-white shadow-lg transform translate-x-full transition-transform duration-300 flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-4 border-b border-lightgray flex-shrink-0">
+                <h3 id="filter-heading" class="text-xl font-semibold">Filters</h3>
+                <button id="close-filter-modal" class="p-2 hover:bg-lightgray rounded-full"><i class="ri-close-line text-xl"></i></button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 space-y-6 overflow-y-auto flex-grow">
+                <!-- Categories -->
+                <div>
+                    <h4 class="font-semibold mb-3">Category</h4>
+                    <div id="modal-category-filters" class="flex flex-wrap gap-2">
+                         <button class="category-btn px-4 py-1.5 rounded-button text-sm font-medium transition-colors active" data-category="All">All</button>
+                         <button class="category-btn px-4 py-1.5 rounded-button text-sm font-medium transition-colors" data-category="Muslim Dresses">Muslim Dresses</button>
+                         <button class="category-btn px-4 py-1.5 rounded-button text-sm font-medium transition-colors" data-category="T-Shirts">T-Shirts</button>
+                         <button class="category-btn px-4 py-1.5 rounded-button text-sm font-medium transition-colors" data-category="Headscarves">Headscarves</button>
+                         <button class="category-btn px-4 py-1.5 rounded-button text-sm font-medium transition-colors" data-category="Accessories">Accessories</button>
+                         <button class="category-btn px-4 py-1.5 rounded-button text-sm font-medium transition-colors" data-category="Sale">Sale</button>
+                    </div>
+                </div>
+
+                <!-- Sort by Price -->
+                <div>
+                    <h4 class="font-semibold mb-3">Sort by Price</h4>
+                    <div class="space-y-2" id="sort-options">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="sort" value="default" class="accent-accent" checked>
+                            <span>Default</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="sort" value="low-to-high" class="accent-accent">
+                            <span>Lowest to Highest</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="sort" value="high-to-low" class="accent-accent">
+                            <span>Highest to Lowest</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Price Range -->
+                <div>
+                    <h4 class="font-semibold mb-3">Price Range (Rp)</h4>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="min-price" placeholder="Min" class="w-full px-3 py-2 border border-lightgray rounded-button focus:outline-none focus:border-accent" min="0">
+                        <span class="text-gray-400">-</span>
+                        <input type="number" id="max-price" placeholder="Max" class="w-full px-3 py-2 border border-lightgray rounded-button focus:outline-none focus:border-accent" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-lightgray flex gap-4 flex-shrink-0">
+                <button id="reset-filters-btn" class="flex-1 w-full py-2 border border-lightgray rounded-button hover:bg-lightgray transition-colors">Reset</button>
+                <button id="apply-filters-btn" class="flex-1 w-full py-2 bg-accent text-white rounded-button hover:opacity-90 transition-opacity">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+
+
     <!-- =========== FOOTER =========== -->
     <footer class="bg-white pt-12 pb-6 mt-auto border-t border-lightgray">
         <div class="container mx-auto px-4">
@@ -318,17 +412,24 @@
 
             // --- DATA ---
             const products = [
-                { id: 1, name: 'Elegant Pink Tunic', price: 720000, stock: 10, category: 'Muslim Clothes', imageUrl: 'https://images.unsplash.com/photo-1610273393228-c1157d59a58c?q=80&w=1964&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/fbcfe8/4a5568?text=Pink+Tunic' },
-                { id: 2, name: 'Classic Blue T-Shirt', price: 320000, stock: 15, category: 'T-Shirts', imageUrl: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/a5f3fc/4a5568?text=Blue+T-Shirt' },
-                { id: 3, name: 'Silver Charm Bracelet', price: 560000, stock: 8, category: 'Accessories', imageUrl: 'https://images.unsplash.com/photo-1611652033959-8a829b28905b?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/e5e7eb/4a5568?text=Bracelet' },
-                { id: 4, name: 'Modest Floral Maxi Dress', price: 1200000, stock: 5, category: 'Muslim Clothes', imageUrl: 'https://images.unsplash.com/photo-1598554748119-043360212f71?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/fbcfe8/4a5568?text=Maxi+Dress' },
-                { id: 5, name: 'Minimalist Gold Necklace', price: 880000, stock: 12, category: 'Accessories', imageUrl: 'https://images.unsplash.com/photo-1616723941299-234a2e85511b?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/e5e7eb/4a5568?text=Necklace' },
-                { id: 6, name: 'Graphic Print Tee', price: 400000, stock: 20, category: 'T-Shirts', imageUrl: 'https://images.unsplash.com/photo-1622956994544-a652310ee8ce?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/a5f3fc/4a5568?text=Graphic+Tee' },
+                // DATA STRUCTURE CHANGE: `stock` is removed. `sizes` object holds stock for sized items. `stock` property remains for non-sized items.
+                { id: 1, name: 'Elegant Pink Tunic', price: 720000, sizes: { S: 5, M: 2, L: 3, XL: 0 }, category: ['Muslim Dresses', 'Sale'], imageUrl: 'https://images.unsplash.com/photo-1610273393228-c1157d59a58c?q=80&w=1964&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/fbcfe8/4a5568?text=Pink+Tunic' },
+                { id: 2, name: 'Classic Blue T-Shirt', price: 320000, sizes: { S: 10, M: 5, L: 0, XL: 8 }, category: ['T-Shirts'], imageUrl: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/a5f3fc/4a5568?text=Blue+T-Shirt' },
+                { id: 3, name: 'Silver Charm Bracelet', price: 560000, stock: 8, category: ['Accessories'], imageUrl: 'https://images.unsplash.com/photo-1611652033959-8a829b28905b?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/e5e7eb/4a5568?text=Bracelet' },
+                { id: 4, name: 'Modest Floral Maxi Dress', price: 1200000, sizes: { S: 1, M: 2, L: 2, XL: 0 }, category: ['Muslim Dresses'], imageUrl: 'https://images.unsplash.com/photo-1598554748119-043360212f71?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/fbcfe8/4a5568?text=Maxi+Dress' },
+                { id: 5, name: 'Minimalist Gold Necklace', price: 880000, stock: 12, category: ['Accessories'], imageUrl: 'https://images.unsplash.com/photo-1616723941299-234a2e85511b?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/e5e7eb/4a5568?text=Necklace' },
+                { id: 6, name: 'Graphic Print Tee', price: 400000, sizes: { S: 15, M: 10, L: 5, XL: 5 }, category: ['T-Shirts', 'Sale'], imageUrl: 'https://images.unsplash.com/photo-1622956994544-a652310ee8ce?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/a5f3fc/4a5568?text=Graphic+Tee' },
+                { id: 7, name: 'Satin Silk Headscarf', price: 250000, stock: 30, category: ['Headscarves'], imageUrl: 'https://images.unsplash.com/photo-1620215191069-b6295a8153c7?q=80&w=1964&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/f8bbd0/4a5568?text=Headscarf'}
             ];
             let cart = [];
+            let currentSearchTerm = '';
+            let tempFilters = { category: 'All', sort: 'default', minPrice: '', maxPrice: '' };
+            let activeFilters = { ...tempFilters };
+
             const pages = document.querySelectorAll('.page');
             const navLinks = document.querySelectorAll('.nav-link');
             const productGrid = document.getElementById('product-grid');
+            const noResultsMessage = document.getElementById('no-results-message');
             const cartItemsContainer = document.getElementById('cart-items-container');
             const cartCountEl = document.getElementById('cart-count');
             const emptyCartMessage = document.getElementById('empty-cart-message');
@@ -342,47 +443,67 @@
             const mobileMenu = document.getElementById('mobile-menu');
             const menuOpenIcon = document.getElementById('menu-open-icon');
             const menuCloseIcon = document.getElementById('menu-close-icon');
+            const searchInput = document.getElementById('search-input');
+            const filterModalButton = document.getElementById('filter-modal-button');
+            const filterModal = document.getElementById('filter-modal');
+            const filterPanel = document.getElementById('filter-panel');
+            const closeFilterModalBtn = document.getElementById('close-filter-modal');
+            const modalCategoryFilters = document.getElementById('modal-category-filters');
+            const sortOptions = document.getElementById('sort-options');
+            const minPriceInput = document.getElementById('min-price');
+            const maxPriceInput = document.getElementById('max-price');
+            const applyFiltersBtn = document.getElementById('apply-filters-btn');
+            const resetFiltersBtn = document.getElementById('reset-filters-btn');
 
-            // --- HELPER FUNCTIONS ---
-            const formatRupiah = (number) => {
-                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
-            }
+            const formatRupiah = (number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
 
             const showNotification = (message, isSuccess = true) => {
                 notificationEl.textContent = message;
                 notificationEl.style.backgroundColor = isSuccess ? '#1f2937' : '#ef4444';
                 notificationEl.style.transform = 'translateX(0)';
-                setTimeout(() => {
-                    notificationEl.style.transform = 'translateX(120%)';
-                }, 3000);
+                setTimeout(() => { notificationEl.style.transform = 'translateX(120%)' }, 3000);
             };
 
             const renderProducts = () => {
                 productGrid.innerHTML = '';
-                products.forEach(product => {
+                let filteredProducts = [...products];
+
+                if (activeFilters.category !== 'All') filteredProducts = filteredProducts.filter(p => p.category.includes(activeFilters.category));
+                if (currentSearchTerm) filteredProducts = filteredProducts.filter(p => p.name.toLowerCase().includes(currentSearchTerm.toLowerCase()));
+                if (activeFilters.minPrice) filteredProducts = filteredProducts.filter(p => p.price >= activeFilters.minPrice);
+                if (activeFilters.maxPrice) filteredProducts = filteredProducts.filter(p => p.price <= activeFilters.maxPrice);
+                
+                if (activeFilters.sort === 'low-to-high') filteredProducts.sort((a, b) => a.price - b.price);
+                else if (activeFilters.sort === 'high-to-low') filteredProducts.sort((a, b) => b.price - a.price);
+                
+                noResultsMessage.classList.toggle('hidden', filteredProducts.length > 0);
+                productGrid.classList.toggle('hidden', filteredProducts.length === 0);
+
+                filteredProducts.forEach(product => {
+                    const hasSizes = !!product.sizes;
+                    const defaultSize = hasSizes ? 'M' : null;
+                    const initialStock = hasSizes ? product.sizes[defaultSize] : product.stock;
+
                     productGrid.innerHTML += `
                         <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg" data-id="${product.id}">
-                            <div class="h-80 overflow-hidden">
-                                <img src="${product.imageUrl}" onerror="this.onerror=null;this.src='${product.errorUrl}';" alt="${product.name}" class="w-full h-full object-cover">
-                            </div>
+                            <div class="h-64 sm:h-80 overflow-hidden"><img src="${product.imageUrl}" onerror="this.onerror=null;this.src='${product.errorUrl}';" alt="${product.name}" class="w-full h-full object-cover"></div>
                             <div class="p-4 flex flex-col flex-grow">
                                 <h3 class="text-lg font-semibold mb-1">${product.name}</h3>
-                                <p class="text-gray-500 text-sm mb-3">${product.category}</p>
-                                <div class="flex justify-between items-center mb-4">
+                                <div class="mt-1 mb-3">
                                     <span class="font-bold text-gray-900">${formatRupiah(product.price)}</span>
-                                    <span class="text-xs text-gray-500">${product.stock} in stock</span>
+                                    <p class="stock-display text-xs text-gray-500 mt-1">${initialStock} in stock</p>
                                 </div>
-                                ${ (product.category !== 'Accessories') ? `
+                                ${hasSizes ? `
                                 <div class="mb-4 size-selector">
                                     <p class="text-sm text-gray-700 mb-2">Size:</p>
-                                    <div class="flex space-x-2">
-                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="S">S</button>
-                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm active" data-size="M">M</button>
-                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="L">L</button>
-                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="XL">XL</button>
+                                    <div class="relative flex space-x-2">
+                                        <div class="size-bubble absolute left-[calc(1rem+32px)] top-0 w-8 h-8 bg-accent rounded-full transition-all duration-300 ease-in-out z-0"></div>
+                                        <button class="size-btn relative z-10 w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="S">S</button>
+                                        <button class="size-btn relative z-10 w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm active" data-size="M">M</button>
+                                        <button class="size-btn relative z-10 w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="L">L</button>
+                                        <button class="size-btn relative z-10 w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="XL">XL</button>
                                     </div>
-                                </div>
-                                ` : '<div class="h-14"></div>'}
+                                </div>` : '<div class="h-14"></div>'}
                                 <button class="add-to-cart-btn mt-auto bg-primary hover:bg-accent hover:text-white transition-all w-full py-2 rounded-button font-medium whitespace-nowrap">Add to Cart</button>
                             </div>
                         </div>`;
@@ -399,25 +520,24 @@
                     cartContentWrapper.classList.remove('hidden');
                     emptyCartMessage.classList.add('hidden');
                     cart.forEach(item => {
-                        const product = products.find(p => p.id === item.id);
                         const itemTotal = item.price * item.quantity;
                         subtotal += itemTotal;
                         cartItemsContainer.innerHTML += `
-                             <div class="cart-item py-4 border-b border-lightgray flex flex-col sm:flex-row gap-4" data-id="${item.id}" data-size="${item.selectedSize || ''}">
+                             <div class="cart-item py-4 border-b border-lightgray flex flex-col sm:flex-row gap-4 last:border-b-0" data-id="${item.id}" data-size="${item.selectedSize || 'null'}">
                                 <img src="${item.imageUrl}" onerror="this.onerror=null;this.src='${item.errorUrl}';" alt="${item.name}" class="w-24 h-24 object-cover rounded-md flex-shrink-0">
                                 <div class="flex-1">
                                     <div class="flex justify-between mb-1">
                                         <h3 class="text-lg font-semibold">${item.name}</h3>
                                         <span class="font-bold text-gray-900">${formatRupiah(itemTotal)}</span>
                                     </div>
-                                    <p class="text-gray-500 text-sm">${item.selectedSize ? `Size: ${item.selectedSize}` : ''}</p>
+                                    <p class="text-gray-500 text-sm">${item.selectedSize ? `Size: ${item.selectedSize} | Stock: ${item.maxStock}` : `Stock: ${item.maxStock}`}</p>
                                     <div class="flex justify-between items-center mt-3">
                                         <div class="flex items-center">
-                                            <button class="quantity-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center" data-action="decrease"><i class="ri-subtract-line"></i></button>
+                                            <button class="quantity-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center transition-transform hover:scale-110" data-action="decrease"><i class="ri-subtract-line"></i></button>
                                             <span class="w-10 text-center font-medium">${item.quantity}</span>
-                                            <button class="quantity-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center" data-action="increase"><i class="ri-add-line"></i></button>
+                                            <button class="quantity-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center transition-transform hover:scale-110" data-action="increase"><i class="ri-add-line"></i></button>
                                         </div>
-                                        <button class="remove-item-btn text-gray-400 hover:text-accent"><i class="ri-delete-bin-line ri-lg"></i></button>
+                                        <button class="remove-item-btn text-gray-400 hover:text-accent transition-colors"><i class="ri-delete-bin-line ri-lg"></i></button>
                                     </div>
                                 </div>
                             </div>`;
@@ -426,27 +546,29 @@
                 summarySubtotalEl.textContent = formatRupiah(subtotal);
                 summaryTotalEl.textContent = formatRupiah(subtotal);
                 checkoutButton.disabled = cart.length === 0;
-                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-                cartCountEl.textContent = totalItems;
+                cartCountEl.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
             };
 
             const addToCart = (productId, selectedSize) => {
                 const product = products.find(p => p.id === productId);
+                const stockForItem = product.sizes ? product.sizes[selectedSize] : product.stock;
+                
+                if (stockForItem === 0) {
+                    showNotification(`Sorry, ${product.name} ${selectedSize ? `(${selectedSize})` : ''} is out of stock.`, false);
+                    return;
+                }
+
                 const cartItem = cart.find(item => item.id === productId && item.selectedSize === selectedSize);
                 if (cartItem) {
-                    if (cartItem.quantity < product.stock) {
+                    if (cartItem.quantity < stockForItem) {
                         cartItem.quantity++;
                         showNotification(`${product.name} quantity updated.`);
                     } else {
-                        showNotification(`Cannot add more. Only ${product.stock} in stock.`, false);
+                        showNotification(`Cannot add more. Max stock for this item.`, false);
                     }
                 } else {
-                     if (product.stock > 0) {
-                        cart.push({ ...product, quantity: 1, selectedSize: selectedSize });
-                        showNotification(`${product.name} added to cart.`);
-                    } else {
-                        showNotification(`${product.name} is out of stock.`, false);
-                    }
+                    cart.push({ ...product, quantity: 1, selectedSize: selectedSize, maxStock: stockForItem });
+                    showNotification(`${product.name} added to cart.`);
                 }
                 renderCart();
             };
@@ -454,9 +576,10 @@
             const updateQuantity = (productId, action, itemSize) => {
                 const cartItem = cart.find(item => item.id === productId && item.selectedSize === itemSize);
                 if (!cartItem) return;
-                const product = products.find(p => p.id === productId);
-                if (action === 'increase' && cartItem.quantity < product.stock) {
+                if (action === 'increase' && cartItem.quantity < cartItem.maxStock) {
                     cartItem.quantity++;
+                } else if (action === 'increase') {
+                    showNotification(`Max stock reached for this item.`, false);
                 } else if (action === 'decrease') {
                     cartItem.quantity--;
                     if (cartItem.quantity === 0) {
@@ -468,24 +591,32 @@
 
             const removeFromCart = (productId, itemSize) => {
                 const item = cart.find(i => i.id === productId && i.selectedSize === itemSize);
-                if (item) { showNotification(`${item.name} removed from cart.`); }
+                if (item) showNotification(`${item.name} removed from cart.`);
                 cart = cart.filter(i => !(i.id === productId && i.selectedSize === itemSize));
                 renderCart();
             };
 
             const showPage = (pageId) => {
-                pages.forEach(page => page.classList.toggle('hidden', page.id !== `page-${pageId}`));
+                pages.forEach(page => {
+                    page.classList.add('hidden');
+                    page.classList.remove('animate-fade-in');
+                });
+                const targetPage = document.getElementById(`page-${pageId}`);
+                if (targetPage) {
+                    targetPage.classList.remove('hidden');
+                    targetPage.classList.add('animate-fade-in');
+                }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 mobileMenu.classList.add('hidden');
                 menuOpenIcon.classList.remove('hidden');
                 menuCloseIcon.classList.add('hidden');
                 document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                document.querySelector(`.nav-link[data-page="${pageId}"]`)?.classList.add('active');
+                document.querySelectorAll(`.nav-link[data-page="${pageId}"]`).forEach(l => l.classList.add('active'));
             };
 
             const handleScroll = () => {
                 header.classList.toggle('glassmorphism', window.scrollY > 20);
-                header.classList.toggle('bg-white', window.scrollY <= 20);
+                header.classList.toggle('shadow-sm', window.scrollY > 20);
             };
             
             const handleCheckout = () => {
@@ -499,8 +630,37 @@
                     subtotal += item.price * item.quantity;
                 });
                 message += `\n*Total: ${formatRupiah(subtotal)}*\n\nThank you!`;
-                const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-                window.open(whatsappUrl, '_blank');
+                window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            };
+
+            const openFilterModal = () => {
+                filterModal.classList.remove('hidden');
+                setTimeout(() => filterPanel.classList.remove('translate-x-full'), 10);
+            };
+
+            const closeFilterModal = () => {
+                filterPanel.classList.add('translate-x-full');
+                setTimeout(() => filterModal.classList.add('hidden'), 300);
+            };
+            
+            const applyFilters = () => {
+                activeFilters = { ...tempFilters };
+                renderProducts();
+                closeFilterModal();
+            };
+            
+            const resetFilters = () => {
+                tempFilters = { category: 'All', sort: 'default', minPrice: '', maxPrice: '' };
+                activeFilters = { ...tempFilters };
+                modalCategoryFilters.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                modalCategoryFilters.querySelector('.category-btn[data-category="All"]').classList.add('active');
+                document.querySelector('input[name="sort"][value="default"]').checked = true;
+                minPriceInput.value = '';
+                maxPriceInput.value = '';
+                searchInput.value = '';
+                currentSearchTerm = '';
+                renderProducts();
+                closeFilterModal();
             };
 
             // --- EVENT LISTENERS ---
@@ -513,19 +673,37 @@
             
             productGrid.addEventListener('click', e => {
                 const sizeBtn = e.target.closest('.size-btn');
-                if (sizeBtn) {
-                    sizeBtn.parentElement.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+                const card = e.target.closest('.product-card');
+                if (sizeBtn && card) {
+                    const sizeSelector = card.querySelector('.size-selector');
+                    const sizeBubble = sizeSelector.querySelector('.size-bubble');
+                    const stockDisplay = card.querySelector('.stock-display');
+                    const productId = parseInt(card.dataset.id);
+                    const product = products.find(p => p.id === productId);
+
+                    // Update active button
+                    sizeSelector.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
                     sizeBtn.classList.add('active');
+
+                    // Move bubble
+                    sizeBubble.style.left = `${sizeBtn.offsetLeft}px`;
+                    
+                    // Update stock display
+                    const selectedSize = sizeBtn.dataset.size;
+                    const newStock = product.sizes[selectedSize];
+                    stockDisplay.textContent = `${newStock} in stock`;
+                    stockDisplay.classList.add('animate-pulse-fade');
+                    setTimeout(() => stockDisplay.classList.remove('animate-pulse-fade'), 400);
                 }
 
                 const addToCartBtn = e.target.closest('.add-to-cart-btn');
                 if (addToCartBtn) {
-                    const card = addToCartBtn.closest('.product-card');
-                    const productId = parseInt(card.dataset.id);
+                    const productCard = addToCartBtn.closest('.product-card');
+                    const productId = parseInt(productCard.dataset.id);
                     const product = products.find(p => p.id === productId);
                     let selectedSize = null;
-                    if(card.querySelector('.size-selector')) {
-                        const activeSizeBtn = card.querySelector('.size-btn.active');
+                    if(product.sizes) {
+                        const activeSizeBtn = productCard.querySelector('.size-btn.active');
                         if (!activeSizeBtn) { showNotification('Please select a size first!', false); return; }
                         selectedSize = activeSizeBtn.dataset.size;
                     }
@@ -542,7 +720,6 @@
                  const productId = parseInt(cartItemDiv.dataset.id, 10);
                  let selectedSize = cartItemDiv.dataset.size;
                  if (selectedSize === 'null') selectedSize = null;
-
                  if (targetButton.classList.contains('quantity-btn')) {
                     updateQuantity(productId, targetButton.dataset.action, selectedSize);
                  }
@@ -557,6 +734,27 @@
                 menuCloseIcon.classList.toggle('hidden');
             });
             
+            // Filter listeners
+            filterModalButton.addEventListener('click', openFilterModal);
+            closeFilterModalBtn.addEventListener('click', closeFilterModal);
+            filterModal.addEventListener('click', (e) => { if(e.target === filterModal) closeFilterModal(); });
+            modalCategoryFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('category-btn')) {
+                    tempFilters.category = e.target.dataset.category;
+                    modalCategoryFilters.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                }
+            });
+            sortOptions.addEventListener('change', (e) => { if(e.target.type === 'radio') tempFilters.sort = e.target.value; });
+            minPriceInput.addEventListener('input', (e) => { tempFilters.minPrice = e.target.value ? parseInt(e.target.value) : ''; });
+            maxPriceInput.addEventListener('input', (e) => { tempFilters.maxPrice = e.target.value ? parseInt(e.target.value) : ''; });
+            applyFiltersBtn.addEventListener('click', applyFilters);
+            resetFiltersBtn.addEventListener('click', resetFilters);
+            searchInput.addEventListener('input', (e) => {
+                currentSearchTerm = e.target.value;
+                renderProducts();
+            });
+
             checkoutButton.addEventListener('click', handleCheckout);
             window.addEventListener('scroll', handleScroll);
 
@@ -569,3 +767,4 @@
 
 </body>
 </html>
+    
