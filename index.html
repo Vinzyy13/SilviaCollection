@@ -110,20 +110,34 @@
                     <i class="ri-shopping-cart-2-line text-2xl text-gray-800"></i>
                     <span id="cart-count" class="absolute -top-1 -right-1 bg-accent text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
                 </button>
-                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-slate-700 hover:bg-primary">
-                    <i id="menu-open-icon" class="ri-menu-line text-2xl"></i>
-                    <i id="menu-close-icon" class="ri-close-line text-2xl hidden"></i>
+                <button id="mobile-menu-button" class="md:hidden p-2 group">
+                    <div class="space-y-1.5">
+                        <span class="block w-6 h-0.5 bg-gray-800 transition-all duration-300 ease-in-out group-[.open]:rotate-45 group-[.open]:translate-y-2"></span>
+                        <span class="block w-6 h-0.5 bg-gray-800 transition-all duration-300 ease-in-out group-[.open]:opacity-0"></span>
+                        <span class="block w-6 h-0.5 bg-gray-800 transition-all duration-300 ease-in-out group-[.open]:-rotate-45 group-[.open]:-translate-y-2"></span>
+                    </div>
                 </button>
             </div>
         </nav>
     </header>
 
      <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-40 bg-white/95 backdrop-blur-sm pt-24">
-        <div class="flex flex-col items-center justify-center h-full space-y-8">
-            <a href="#home" class="mobile-nav-link text-3xl font-bold text-slate-800 hover:text-accent" data-page="home">Home</a>
-            <a href="#shop" class="mobile-nav-link text-3xl font-bold text-slate-800 hover:text-accent" data-page="shop">Shop</a>
-            <a href="#contact" class="mobile-nav-link text-3xl font-bold text-slate-800 hover:text-accent" data-page="contact">Contact Us</a>
+    <div id="mobile-menu" class="md:hidden fixed inset-0 z-40 bg-white/95 backdrop-blur-sm pt-24 transition-transform duration-300 ease-in-out translate-x-full">
+        <div class="container mx-auto px-4 h-full">
+            <div class="divide-y divide-lightgray">
+                 <a href="#home" class="mobile-nav-link flex items-center gap-4 py-4 text-2xl font-semibold text-slate-800 hover:text-accent hover:bg-primary/50 transition-colors" data-page="home">
+                     <i class="ri-home-4-line text-2xl w-8 text-center text-accent"></i>
+                     <span>Home</span>
+                 </a>
+                 <a href="#shop" class="mobile-nav-link flex items-center gap-4 py-4 text-2xl font-semibold text-slate-800 hover:text-accent hover:bg-primary/50 transition-colors" data-page="shop">
+                     <i class="ri-store-2-line text-2xl w-8 text-center text-accent"></i>
+                     <span>Shop</span>
+                 </a>
+                 <a href="#contact" class="mobile-nav-link flex items-center gap-4 py-4 text-2xl font-semibold text-slate-800 hover:text-accent hover:bg-primary/50 transition-colors" data-page="contact">
+                     <i class="ri-customer-service-2-line text-2xl w-8 text-center text-accent"></i>
+                     <span>Contact Us</span>
+                 </a>
+            </div>
         </div>
     </div>
 
@@ -441,8 +455,6 @@
             const header = document.getElementById('header');
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
-            const menuOpenIcon = document.getElementById('menu-open-icon');
-            const menuCloseIcon = document.getElementById('menu-close-icon');
             const searchInput = document.getElementById('search-input');
             const filterModalButton = document.getElementById('filter-modal-button');
             const filterModal = document.getElementById('filter-modal');
@@ -497,7 +509,7 @@
                                 <div class="mb-4 size-selector">
                                     <p class="text-sm text-gray-700 mb-2">Size:</p>
                                     <div class="flex space-x-2 flex-nowrap">
-                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="S">S</button>
+                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm transition-colors" data-size="S">S</button>
                                         <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm active" data-size="M">M</button>
                                         <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="L">L</button>
                                         <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="XL">XL</button>
@@ -606,9 +618,8 @@
                     targetPage.classList.add('animate-fade-in');
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                mobileMenu.classList.add('hidden');
-                menuOpenIcon.classList.remove('hidden');
-                menuCloseIcon.classList.add('hidden');
+                mobileMenu.classList.add('translate-x-full');
+                mobileMenuButton.classList.remove('open');
                 document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
                 document.querySelectorAll(`.nav-link[data-page="${pageId}"]`).forEach(l => l.classList.add('active'));
             };
@@ -723,9 +734,8 @@
             });
             
             mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-                menuOpenIcon.classList.toggle('hidden');
-                menuCloseIcon.classList.toggle('hidden');
+                mobileMenu.classList.toggle('translate-x-full');
+                mobileMenuButton.classList.toggle('open');
             });
             
             // Filter listeners
