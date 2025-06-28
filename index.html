@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silvia Collection</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Custom Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FFD1DC',
+                        secondary: '#A7C7E7',
+                        accent: '#FF69B4',
+                        navy: '#000080',
+                        offwhite: '#F8F8F8',
+                        lightgray: '#E6E6E6'
+                    },
+                    borderRadius: {
+                        'button': '8px'
+                    },
+                     fontFamily: {
+                        'sans': ['Poppins', 'sans-serif'],
+                        'display': ['Pacifico', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .glassmorphism {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #FF69B4;
+        }
+        .hero-overlay {
+            background: linear-gradient(90deg, rgba(248,248,248,1) 0%, rgba(248,248,248,0.8) 40%, rgba(248,248,248,0) 100%);
+        }
+        .size-btn.active {
+            background-color: #FF69B4;
+            color: white;
+            border-color: #FF69B4;
+        }
+    </style>
+</head>
+<body class="bg-offwhite min-h-screen flex flex-col">
+
+    <!-- =========== HEADER =========== -->
+    <header id="header" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-white shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <!-- Left Side: Logo and Name -->
+            <a href="#home" data-page="home" class="nav-link text-3xl font-display text-accent">
+                Silvia Collection
+            </a>
+
+            <!-- Center: Desktop Navigation Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="nav-link relative text-gray-800 hover:text-accent font-medium transition-all" data-page="home">Home</a>
+                <a href="#shop" class="nav-link relative text-gray-800 hover:text-accent font-medium transition-all" data-page="shop">Shop</a>
+                <a href="#contact" class="nav-link relative text-gray-800 hover:text-accent font-medium transition-all" data-page="contact">Contact Us</a>
+            </div>
+
+            <!-- Right Side: Cart and Mobile Menu Button -->
+            <div class="flex items-center space-x-4">
+                <button id="cart-button" data-page="cart" class="nav-link relative hover:scale-110 transition-transform">
+                    <i class="ri-shopping-cart-2-line text-2xl text-gray-800"></i>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-accent text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                </button>
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-slate-700 hover:bg-primary">
+                    <i id="menu-open-icon" class="ri-menu-line text-2xl"></i>
+                    <i id="menu-close-icon" class="ri-close-line text-2xl hidden"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+     <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-40 bg-white/95 backdrop-blur-sm pt-24">
+        <div class="flex flex-col items-center justify-center h-full space-y-8">
+            <a href="#home" class="mobile-nav-link text-3xl font-bold text-slate-800 hover:text-accent" data-page="home">Home</a>
+            <a href="#shop" class="mobile-nav-link text-3xl font-bold text-slate-800 hover:text-accent" data-page="shop">Shop</a>
+            <a href="#contact" class="mobile-nav-link text-3xl font-bold text-slate-800 hover:text-accent" data-page="contact">Contact Us</a>
+        </div>
+    </div>
+
+
+    <!-- =========== MAIN CONTENT =========== -->
+    <main class="pt-20 flex-grow"> <!-- Padding top to avoid content being hidden by fixed header -->
+
+        <!-- =========== HOME PAGE =========== -->
+        <section id="page-home" class="page">
+            <!-- Hero Section -->
+            <div class="hero-section w-full h-[600px] bg-cover bg-center" style="background-image: url('https://readdy.ai/api/search-image?query=elegant%20fashion%20model%20wearing%20pink%20modest%20clothing%20standing%20in%20a%20minimalist%20studio%20with%20soft%20lighting%2C%20professional%20fashion%20photography%20with%20clean%20background%2C%20high-end%20fashion%20catalog%20style%2C%20the%20left%20side%20has%20a%20clean%20white%20background%20for%20text%20placement&width=1920&height=1080&seq=1&orientation=landscape')">
+                <div class="hero-overlay w-full h-full flex items-center">
+                    <div class="container mx-auto px-4">
+                        <div class="max-w-xl">
+                            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Elegance in Every Stitch</h1>
+                            <p class="text-lg text-gray-700 mb-8">Discover our curated collection of modest fashion and contemporary styles that blend tradition with modern aesthetics.</p>
+                            <div class="flex space-x-4">
+                                <a href="#shop" data-page="shop" class="nav-link bg-primary hover:bg-accent hover:text-white transition-all px-6 py-3 rounded-button font-medium whitespace-nowrap">Shop Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Benefits Section -->
+            <div class="py-16 bg-white">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center mb-12">Why Choose Silvia Collection</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-offwhite p-8 rounded-lg text-center hover:shadow-lg transition-all">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+                                <i class="ri-award-line ri-2x text-gray-800"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Premium Quality</h3>
+                            <p class="text-gray-600">Ethically sourced fabrics and meticulous craftsmanship ensure lasting quality in every piece.</p>
+                        </div>
+                        <div class="bg-offwhite p-8 rounded-lg text-center hover:shadow-lg transition-all">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+                                <i class="ri-truck-line ri-2x text-gray-800"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Fast Shipping</h3>
+                            <p class="text-gray-600">Enjoy quick and reliable delivery right to your doorstep, every time.</p>
+                        </div>
+                        <div class="bg-offwhite p-8 rounded-lg text-center hover:shadow-lg transition-all">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+                                <i class="ri-customer-service-2-line ri-2x text-gray-800"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Excellent Support</h3>
+                            <p class="text-gray-600">Our team is always here to help you with any questions or concerns.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========== SHOP PAGE =========== -->
+        <section id="page-shop" class="page hidden container mx-auto px-4 sm:px-6 py-16">
+            <h2 class="text-3xl font-bold text-center mb-12">Our Collection</h2>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Product cards will be injected here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- =========== CART PAGE =========== -->
+        <section id="page-cart" class="page hidden container mx-auto px-4 sm:px-6 py-16">
+            <h2 class="text-3xl font-bold text-center mb-12">Your Shopping Cart</h2>
+            <div id="cart-content-wrapper" class="hidden">
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Cart Items (Left/Main Column) -->
+                    <div id="cart-items-container" class="lg:col-span-2 space-y-4 bg-white p-6 rounded-lg shadow-sm">
+                        <!-- Cart items will be injected here -->
+                    </div>
+
+                    <!-- Checkout Summary (Right/Side Column) -->
+                    <div id="checkout-summary" class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-lg shadow-sm lg:sticky top-24">
+                            <h3 class="text-xl font-semibold border-b border-lightgray pb-4 mb-4">Order Summary</h3>
+                            <div class="space-y-3 text-base">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Subtotal</span>
+                                    <span id="summary-subtotal" class="font-semibold">Rp0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Shipping</span>
+                                    <span class="font-semibold">Free</span>
+                                </div>
+                                 <div class="border-t border-lightgray pt-3 mt-3">
+                                    <div class="flex justify-between font-bold text-lg">
+                                        <span>Total</span>
+                                        <span id="summary-total">Rp0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="checkout-button" class="mt-6 w-full bg-accent text-white font-bold py-3 px-6 rounded-button hover:opacity-90 transition-opacity text-lg disabled:bg-lightgray disabled:cursor-not-allowed">
+                                Order via WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Empty cart message -->
+            <div id="empty-cart-message" class="text-center py-16">
+                <i class="ri-shopping-cart-line text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-2xl font-semibold mb-2">Your cart is empty!</h3>
+                <p class="text-slate-600 mb-6">Looks like you haven't added anything to your cart yet.</p>
+                <a href="#shop" class="nav-link bg-primary hover:bg-accent hover:text-white transition-all px-6 py-3 rounded-button font-medium whitespace-nowrap inline-block" data-page="shop">Start Shopping</a>
+            </div>
+        </section>
+
+        <!-- =========== CONTACT US PAGE =========== -->
+        <section id="page-contact" class="page hidden container mx-auto px-4 sm:px-6 py-16">
+            <h2 class="text-3xl font-bold text-center mb-12">Get In Touch</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <!-- Left Side: Contact Info -->
+                <div class="bg-white p-8 rounded-lg shadow-sm">
+                    <h3 class="text-2xl font-semibold mb-6">Contact Information</h3>
+                    <div class="space-y-6">
+                        <a href="https://wa.me/6285714946505" target="_blank" class="flex items-start group">
+                             <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0"><i class="ri-whatsapp-line ri-lg text-gray-700"></i></div>
+                            <div class="ml-4">
+                                <h4 class="text-xl font-semibold text-slate-800">WhatsApp</h4>
+                                <p class="text-accent group-hover:underline transition-colors">+62 857-1494-6505</p>
+                            </div>
+                        </a>
+                        <a href="https://instagram.com/silviacollection" target="_blank" class="flex items-start group">
+                            <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0"><i class="ri-instagram-line ri-lg text-gray-700"></i></div>
+                            <div class="ml-4">
+                                <h4 class="text-xl font-semibold text-slate-800">Instagram</h4>
+                                <p class="text-accent group-hover:underline transition-colors">@silviacollection</p>
+                            </div>
+                        </a>
+                        <div class="flex items-start">
+                           <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0"><i class="ri-map-pin-line ri-lg text-gray-700"></i></div>
+                             <div class="ml-4">
+                                <h4 class="text-xl font-semibold text-slate-800">Our Location</h4>
+                                <p class="text-gray-600">Cileungsi, Bogor Regency, West Java</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Side: Map -->
+                <div>
+                    <div class="rounded-lg shadow-sm h-full overflow-hidden">
+                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126884.4533965686!2d106.9178493972235!3d-6.382435759164968!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e699507b3693d4d%3A0x401576d14fed230!2sCileungsi%2C%20Bogor%20Regency%2C%20West%20Java!5e0!3m2!1sen!2sid!4v1719366050478!5m2!1sen!2sid" 
+                            width="100%" 
+                            height="450" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =========== FOOTER =========== -->
+    <footer class="bg-white pt-12 pb-6 mt-auto border-t border-lightgray">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-2xl font-display text-accent mb-4">Silvia Collection</h3>
+                    <p class="text-gray-600 mb-4">Elevating your style with modest elegance and contemporary fashion.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-gray-700 hover:bg-accent hover:text-white transition-all"><i class="ri-instagram-line"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-gray-700 hover:bg-accent hover:text-white transition-all"><i class="ri-facebook-line"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Shop</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#shop" data-page="shop" class="nav-link text-gray-600 hover:text-accent">All Collections</a></li>
+                        <li><a href="#shop" data-page="shop" class="nav-link text-gray-600 hover:text-accent">Muslim Wear</a></li>
+                        <li><a href="#shop" data-page="shop" class="nav-link text-gray-600 hover:text-accent">T-Shirts</a></li>
+                        <li><a href="#shop" data-page="shop" class="nav-link text-gray-600 hover:text-accent">Accessories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Help</h3>
+                    <ul class="space-y-2">
+                         <li><a href="#contact" data-page="contact" class="nav-link text-gray-600 hover:text-accent">Contact Us</a></li>
+                         <li><a href="#" class="text-gray-600 hover:text-accent">Shipping Information</a></li>
+                         <li><a href="#" class="text-gray-600 hover:text-accent">Returns & Exchanges</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-start"><i class="ri-map-pin-line text-accent mt-1 mr-2"></i><span class="text-gray-600">Cileungsi, Bogor, West Java</span></li>
+                        <li class="flex items-start"><i class="ri-whatsapp-line text-accent mt-1 mr-2"></i><span class="text-gray-600">+62 857-1494-6505</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-lightgray pt-6 text-center">
+                <p class="text-gray-500 text-sm">&copy; 2024 Silvia Collection. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="fixed bottom-5 right-5 bg-gray-800 text-white py-3 px-6 rounded-lg shadow-xl translate-x-[120%] transition-transform duration-500 ease-in-out">
+        Notification Message
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- DATA ---
+            const products = [
+                { id: 1, name: 'Elegant Pink Tunic', price: 720000, stock: 10, category: 'Muslim Clothes', imageUrl: 'https://images.unsplash.com/photo-1610273393228-c1157d59a58c?q=80&w=1964&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/fbcfe8/4a5568?text=Pink+Tunic' },
+                { id: 2, name: 'Classic Blue T-Shirt', price: 320000, stock: 15, category: 'T-Shirts', imageUrl: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/a5f3fc/4a5568?text=Blue+T-Shirt' },
+                { id: 3, name: 'Silver Charm Bracelet', price: 560000, stock: 8, category: 'Accessories', imageUrl: 'https://images.unsplash.com/photo-1611652033959-8a829b28905b?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/e5e7eb/4a5568?text=Bracelet' },
+                { id: 4, name: 'Modest Floral Maxi Dress', price: 1200000, stock: 5, category: 'Muslim Clothes', imageUrl: 'https://images.unsplash.com/photo-1598554748119-043360212f71?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/fbcfe8/4a5568?text=Maxi+Dress' },
+                { id: 5, name: 'Minimalist Gold Necklace', price: 880000, stock: 12, category: 'Accessories', imageUrl: 'https://images.unsplash.com/photo-1616723941299-234a2e85511b?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/e5e7eb/4a5568?text=Necklace' },
+                { id: 6, name: 'Graphic Print Tee', price: 400000, stock: 20, category: 'T-Shirts', imageUrl: 'https://images.unsplash.com/photo-1622956994544-a652310ee8ce?q=80&w=1974&auto=format&fit=crop', errorUrl: 'https://placehold.co/400x500/a5f3fc/4a5568?text=Graphic+Tee' },
+            ];
+            let cart = [];
+            const pages = document.querySelectorAll('.page');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const productGrid = document.getElementById('product-grid');
+            const cartItemsContainer = document.getElementById('cart-items-container');
+            const cartCountEl = document.getElementById('cart-count');
+            const emptyCartMessage = document.getElementById('empty-cart-message');
+            const cartContentWrapper = document.getElementById('cart-content-wrapper');
+            const summarySubtotalEl = document.getElementById('summary-subtotal');
+            const summaryTotalEl = document.getElementById('summary-total');
+            const checkoutButton = document.getElementById('checkout-button');
+            const notificationEl = document.getElementById('notification');
+            const header = document.getElementById('header');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuOpenIcon = document.getElementById('menu-open-icon');
+            const menuCloseIcon = document.getElementById('menu-close-icon');
+
+            // --- HELPER FUNCTIONS ---
+            const formatRupiah = (number) => {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+            }
+
+            const showNotification = (message, isSuccess = true) => {
+                notificationEl.textContent = message;
+                notificationEl.style.backgroundColor = isSuccess ? '#1f2937' : '#ef4444';
+                notificationEl.style.transform = 'translateX(0)';
+                setTimeout(() => {
+                    notificationEl.style.transform = 'translateX(120%)';
+                }, 3000);
+            };
+
+            const renderProducts = () => {
+                productGrid.innerHTML = '';
+                products.forEach(product => {
+                    productGrid.innerHTML += `
+                        <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg" data-id="${product.id}">
+                            <div class="h-80 overflow-hidden">
+                                <img src="${product.imageUrl}" onerror="this.onerror=null;this.src='${product.errorUrl}';" alt="${product.name}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 flex flex-col flex-grow">
+                                <h3 class="text-lg font-semibold mb-1">${product.name}</h3>
+                                <p class="text-gray-500 text-sm mb-3">${product.category}</p>
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="font-bold text-gray-900">${formatRupiah(product.price)}</span>
+                                    <span class="text-xs text-gray-500">${product.stock} in stock</span>
+                                </div>
+                                ${ (product.category !== 'Accessories') ? `
+                                <div class="mb-4 size-selector">
+                                    <p class="text-sm text-gray-700 mb-2">Size:</p>
+                                    <div class="flex space-x-2">
+                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="S">S</button>
+                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm active" data-size="M">M</button>
+                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="L">L</button>
+                                        <button class="size-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center text-sm" data-size="XL">XL</button>
+                                    </div>
+                                </div>
+                                ` : '<div class="h-14"></div>'}
+                                <button class="add-to-cart-btn mt-auto bg-primary hover:bg-accent hover:text-white transition-all w-full py-2 rounded-button font-medium whitespace-nowrap">Add to Cart</button>
+                            </div>
+                        </div>`;
+                });
+            };
+            
+            const renderCart = () => {
+                cartItemsContainer.innerHTML = '';
+                let subtotal = 0;
+                if (cart.length === 0) {
+                    cartContentWrapper.classList.add('hidden');
+                    emptyCartMessage.classList.remove('hidden');
+                } else {
+                    cartContentWrapper.classList.remove('hidden');
+                    emptyCartMessage.classList.add('hidden');
+                    cart.forEach(item => {
+                        const product = products.find(p => p.id === item.id);
+                        const itemTotal = item.price * item.quantity;
+                        subtotal += itemTotal;
+                        cartItemsContainer.innerHTML += `
+                             <div class="cart-item py-4 border-b border-lightgray flex flex-col sm:flex-row gap-4" data-id="${item.id}" data-size="${item.selectedSize || ''}">
+                                <img src="${item.imageUrl}" onerror="this.onerror=null;this.src='${item.errorUrl}';" alt="${item.name}" class="w-24 h-24 object-cover rounded-md flex-shrink-0">
+                                <div class="flex-1">
+                                    <div class="flex justify-between mb-1">
+                                        <h3 class="text-lg font-semibold">${item.name}</h3>
+                                        <span class="font-bold text-gray-900">${formatRupiah(itemTotal)}</span>
+                                    </div>
+                                    <p class="text-gray-500 text-sm">${item.selectedSize ? `Size: ${item.selectedSize}` : ''}</p>
+                                    <div class="flex justify-between items-center mt-3">
+                                        <div class="flex items-center">
+                                            <button class="quantity-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center" data-action="decrease"><i class="ri-subtract-line"></i></button>
+                                            <span class="w-10 text-center font-medium">${item.quantity}</span>
+                                            <button class="quantity-btn w-8 h-8 rounded-full border border-lightgray flex items-center justify-center" data-action="increase"><i class="ri-add-line"></i></button>
+                                        </div>
+                                        <button class="remove-item-btn text-gray-400 hover:text-accent"><i class="ri-delete-bin-line ri-lg"></i></button>
+                                    </div>
+                                </div>
+                            </div>`;
+                    });
+                }
+                summarySubtotalEl.textContent = formatRupiah(subtotal);
+                summaryTotalEl.textContent = formatRupiah(subtotal);
+                checkoutButton.disabled = cart.length === 0;
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartCountEl.textContent = totalItems;
+            };
+
+            const addToCart = (productId, selectedSize) => {
+                const product = products.find(p => p.id === productId);
+                const cartItem = cart.find(item => item.id === productId && item.selectedSize === selectedSize);
+                if (cartItem) {
+                    if (cartItem.quantity < product.stock) {
+                        cartItem.quantity++;
+                        showNotification(`${product.name} quantity updated.`);
+                    } else {
+                        showNotification(`Cannot add more. Only ${product.stock} in stock.`, false);
+                    }
+                } else {
+                     if (product.stock > 0) {
+                        cart.push({ ...product, quantity: 1, selectedSize: selectedSize });
+                        showNotification(`${product.name} added to cart.`);
+                    } else {
+                        showNotification(`${product.name} is out of stock.`, false);
+                    }
+                }
+                renderCart();
+            };
+
+            const updateQuantity = (productId, action, itemSize) => {
+                const cartItem = cart.find(item => item.id === productId && item.selectedSize === itemSize);
+                if (!cartItem) return;
+                const product = products.find(p => p.id === productId);
+                if (action === 'increase' && cartItem.quantity < product.stock) {
+                    cartItem.quantity++;
+                } else if (action === 'decrease') {
+                    cartItem.quantity--;
+                    if (cartItem.quantity === 0) {
+                        cart = cart.filter(item => !(item.id === productId && item.selectedSize === itemSize));
+                    }
+                }
+                renderCart();
+            };
+
+            const removeFromCart = (productId, itemSize) => {
+                const item = cart.find(i => i.id === productId && i.selectedSize === itemSize);
+                if (item) { showNotification(`${item.name} removed from cart.`); }
+                cart = cart.filter(i => !(i.id === productId && i.selectedSize === itemSize));
+                renderCart();
+            };
+
+            const showPage = (pageId) => {
+                pages.forEach(page => page.classList.toggle('hidden', page.id !== `page-${pageId}`));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                mobileMenu.classList.add('hidden');
+                menuOpenIcon.classList.remove('hidden');
+                menuCloseIcon.classList.add('hidden');
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.querySelector(`.nav-link[data-page="${pageId}"]`)?.classList.add('active');
+            };
+
+            const handleScroll = () => {
+                header.classList.toggle('glassmorphism', window.scrollY > 20);
+                header.classList.toggle('bg-white', window.scrollY <= 20);
+            };
+            
+            const handleCheckout = () => {
+                if (cart.length === 0) return;
+                const phoneNumber = "6285714946505";
+                let message = "Hello Silvia Collection, I would like to order the following items:\n\n";
+                let subtotal = 0;
+                cart.forEach(item => {
+                    const sizeInfo = item.selectedSize ? ` (Size: ${item.selectedSize})` : '';
+                    message += `- ${item.name}${sizeInfo} x ${item.quantity}\n`;
+                    subtotal += item.price * item.quantity;
+                });
+                message += `\n*Total: ${formatRupiah(subtotal)}*\n\nThank you!`;
+                const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            };
+
+            // --- EVENT LISTENERS ---
+            document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+                link.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    showPage(link.dataset.page); 
+                });
+            });
+            
+            productGrid.addEventListener('click', e => {
+                const sizeBtn = e.target.closest('.size-btn');
+                if (sizeBtn) {
+                    sizeBtn.parentElement.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+                    sizeBtn.classList.add('active');
+                }
+
+                const addToCartBtn = e.target.closest('.add-to-cart-btn');
+                if (addToCartBtn) {
+                    const card = addToCartBtn.closest('.product-card');
+                    const productId = parseInt(card.dataset.id);
+                    const product = products.find(p => p.id === productId);
+                    let selectedSize = null;
+                    if(card.querySelector('.size-selector')) {
+                        const activeSizeBtn = card.querySelector('.size-btn.active');
+                        if (!activeSizeBtn) { showNotification('Please select a size first!', false); return; }
+                        selectedSize = activeSizeBtn.dataset.size;
+                    }
+                    addToCart(productId, selectedSize);
+                     addToCartBtn.textContent = 'Added!';
+                     setTimeout(() => { addToCartBtn.textContent = 'Add to Cart'; }, 1500);
+                }
+            });
+
+            cartItemsContainer.addEventListener('click', e => {
+                 const targetButton = e.target.closest('.quantity-btn, .remove-item-btn');
+                 if(!targetButton) return;
+                 const cartItemDiv = targetButton.closest('.cart-item');
+                 const productId = parseInt(cartItemDiv.dataset.id, 10);
+                 let selectedSize = cartItemDiv.dataset.size;
+                 if (selectedSize === 'null') selectedSize = null;
+
+                 if (targetButton.classList.contains('quantity-btn')) {
+                    updateQuantity(productId, targetButton.dataset.action, selectedSize);
+                 }
+                 if (targetButton.classList.contains('remove-item-btn')) {
+                    removeFromCart(productId, selectedSize);
+                 }
+            });
+            
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                menuOpenIcon.classList.toggle('hidden');
+                menuCloseIcon.classList.toggle('hidden');
+            });
+            
+            checkoutButton.addEventListener('click', handleCheckout);
+            window.addEventListener('scroll', handleScroll);
+
+            // --- INITIALIZATION ---
+            renderProducts();
+            renderCart();
+            showPage('home');
+        });
+    </script>
+
+</body>
+</html>
