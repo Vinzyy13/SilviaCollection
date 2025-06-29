@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Silvia Collection</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Custom Config (sama seperti web utama) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FFD1DC',
+                        secondary: '#A7C7E7',
+                        accent: '#FF69B4',
+                        navy: '#000080',
+                        offwhite: '#F8F8F8',
+                        lightgray: '#E6E6E6'
+                    },
+                    borderRadius: { 'button': '8px' },
+                    fontFamily: {
+                        'sans': ['Poppins', 'sans-serif'],
+                        'display': ['Pacifico', 'cursive'],
+                    },
+                    boxShadow: {
+                        'input': '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+                        'input-focus': '0 0 0 3px rgba(255, 105, 180, 0.2)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .input-field {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #D1D5DB; /* gray-300 */
+            border-radius: 8px; /* rounded-button */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            transition: all 0.2s ease-in-out;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #FF69B4; /* border-accent */
+            box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.3);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #FF69B4;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-offwhite">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Bagian Tambah Produk -->
+        <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg mb-8">
+            <div class="flex items-center gap-4 mb-6">
+                <i class="ri-add-circle-line text-4xl text-accent"></i>
+                <div>
+                    <h1 class="text-3xl font-display text-accent">Tambah Produk</h1>
+                    <p class="text-gray-600">Isi formulir untuk menambahkan item baru ke toko.</p>
+                </div>
+            </div>
+
+            <form id="add-product-form" class="space-y-6">
+                <!-- Nama Produk -->
+                <div><label for="name" class="block font-medium mb-1">Nama Produk</label><input type="text" id="name" class="input-field" required></div>
+                <!-- Harga -->
+                <div><label for="price" class="block font-medium mb-1">Harga (Rupiah)</label><input type="number" id="price" placeholder="Contoh: 720000" class="input-field" required></div>
+                <!-- URL Gambar -->
+                <div><label for="imageUrl" class="block font-medium mb-1">URL Gambar</label><input type="url" id="imageUrl" placeholder="https://..." class="input-field"></div>
+                <!-- Kategori -->
+                <div><label class="block font-medium mb-2">Kategori</label><div id="category-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2"><label class="flex items-center space-x-2"><input type="checkbox" value="Muslim Dresses" class="accent-accent"> <span>Muslim Dresses</span></label><label class="flex items-center space-x-2"><input type="checkbox" value="T-Shirts" class="accent-accent"> <span>T-Shirts</span></label><label class="flex items-center space-x-2"><input type="checkbox" value="Headscarves" class="accent-accent"> <span>Headscarves</span></label><label class="flex items-center space-x-2"><input type="checkbox" value="Accessories" class="accent-accent"> <span>Accessories</span></label><label class="flex items-center space-x-2"><input type="checkbox" value="Sale" class="accent-accent"> <span>Sale</span></label></div></div>
+                <!-- Opsi Stok -->
+                <div><label class="flex items-center space-x-2"><input type="checkbox" id="has-sizes" class="accent-accent"><span>Produk ini memiliki ukuran?</span></label></div>
+                <div id="size-stock-container" class="hidden space-y-4 p-4 border border-lightgray rounded-md"><h4 class="font-medium">Stok per Ukuran</h4><div class="grid grid-cols-2 gap-4"><div><label for="sizeS" class="block text-sm mb-1">Ukuran S</label><input type="number" id="sizeS" value="0" min="0" class="input-field"></div><div><label for="sizeM" class="block text-sm mb-1">Ukuran M</label><input type="number" id="sizeM" value="0" min="0" class="input-field"></div><div><label for="sizeL" class="block text-sm mb-1">Ukuran L</label><input type="number" id="sizeL" value="0" min="0" class="input-field"></div><div><label for="sizeXL" class="block text-sm mb-1">Ukuran XL</label><input type="number" id="sizeXL" value="0" min="0" class="input-field"></div></div></div>
+                <div id="single-stock-container"><label for="stock" class="block font-medium mb-1">Jumlah Stok</label><input type="number" id="stock" value="0" min="0" class="input-field"></div>
+                <!-- Tombol Simpan -->
+                <div>
+                    <button type="submit" id="save-button" class="w-full flex items-center justify-center bg-accent text-white font-bold py-3 px-6 rounded-button hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-wait">
+                         <span id="button-text">Simpan Produk</span>
+                         <div id="button-loader" class="loader hidden"></div>
+                    </button>
+                </div>
+            </form>
+            <div id="status-message" class="mt-4 text-center font-medium"></div>
+        </div>
+
+        <!-- Bagian Kelola Produk -->
+        <div class="max-w-6xl mx-auto mt-12">
+            <div class="flex items-center gap-4 mb-6">
+                 <i class="ri-store-2-line text-4xl text-accent"></i>
+                <div>
+                    <h2 class="text-3xl font-display text-accent">Kelola Produk</h2>
+                    <p class="text-gray-600">Edit atau hapus produk yang sudah ada.</p>
+                </div>
+            </div>
+            <div id="product-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+            <div id="product-list-loader" class="text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-gray-500">Memuat produk...</p></div>
+        </div>
+    </div>
+    
+    <!-- Modal Edit Produk -->
+    <div id="edit-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b"><h3 class="text-2xl font-display text-accent">Edit Produk</h3><button id="close-edit-modal" class="p-2 hover:bg-lightgray rounded-full"><i class="ri-close-line text-xl"></i></button></div>
+            <div class="p-8 overflow-y-auto"><form id="edit-product-form" class="space-y-6"></form></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (tanpa Storage) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+
+    <script>
+        // =================================================================================
+        // PASTE FIREBASE CONFIG DI SINI
+        // =================================================================================
+        const firebaseConfig = {
+         apiKey: "AIzaSyDZcx8arE27UlA4dlGupMMPcx2n-3gdq7Y",
+         authDomain: "silvia-collection-db-5ecef.firebaseapp.com",
+         projectId: "silvia-collection-db-5ecef",
+         storageBucket: "silvia-collection-db-5ecef.firebasestorage.app",
+         messagingSenderId: "1031396888501",
+         appId: "1:1031396888501:web:6c363f50e81c1d4da693fc"
+        };
+        // =================================================================================
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const addProductForm = document.getElementById('add-product-form');
+        const hasSizesCheckbox = document.getElementById('has-sizes');
+        const sizeStockContainer = document.getElementById('size-stock-container');
+        const singleStockContainer = document.getElementById('single-stock-container');
+        const saveButton = document.getElementById('save-button');
+        const buttonText = document.getElementById('button-text');
+        const buttonLoader = document.getElementById('button-loader');
+        const statusMessage = document.getElementById('status-message');
+        const productListContainer = document.getElementById('product-list-container');
+        const productListLoader = document.getElementById('product-list-loader');
+        const editModal = document.getElementById('edit-modal');
+        const closeEditModalBtn = document.getElementById('close-edit-modal');
+        const editProductForm = document.getElementById('edit-product-form');
+
+        hasSizesCheckbox.addEventListener('change', () => {
+            sizeStockContainer.classList.toggle('hidden', !hasSizesCheckbox.checked);
+            singleStockContainer.classList.toggle('hidden', hasSizesCheckbox.checked);
+        });
+
+        addProductForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            saveButton.disabled = true;
+            buttonText.classList.add('hidden');
+            buttonLoader.classList.remove('hidden');
+            statusMessage.textContent = '';
+
+            try {
+                const name = document.getElementById('name').value;
+                let imageUrl = document.getElementById('imageUrl').value;
+                if (!imageUrl) {
+                    imageUrl = `https://placehold.co/400x500/FFD1DC/FF69B4?text=${encodeURIComponent(name)}`;
+                }
+                
+                const price = parseInt(document.getElementById('price').value);
+                const errorUrl = `https://placehold.co/400x500/f8f8f8/cccccc?text=${encodeURIComponent(name)}`;
+                const categories = Array.from(document.querySelectorAll('#category-checkboxes input:checked')).map(cb => cb.value);
+
+                if (categories.length === 0) throw new Error("Pilih minimal satu kategori.");
+
+                const productData = { name, price, imageUrl, errorUrl, category: categories };
+
+                if (hasSizesCheckbox.checked) {
+                    productData.sizes = { S: parseInt(document.getElementById('sizeS').value)||0, M: parseInt(document.getElementById('sizeM').value)||0, L: parseInt(document.getElementById('sizeL').value)||0, XL: parseInt(document.getElementById('sizeXL').value)||0 };
+                } else {
+                    productData.stock = parseInt(document.getElementById('stock').value) || 0;
+                }
+
+                await db.collection("products").add(productData);
+
+                statusMessage.textContent = 'Produk berhasil ditambahkan!';
+                statusMessage.className = 'mt-4 text-center font-medium text-green-600';
+                addProductForm.reset();
+                hasSizesCheckbox.checked = false;
+                sizeStockContainer.classList.add('hidden');
+                singleStockContainer.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Error adding product: ", error);
+                statusMessage.textContent = `Error: ${error.message}`;
+                statusMessage.className = 'mt-4 text-center font-medium text-red-600';
+            } finally {
+                saveButton.disabled = false;
+                buttonText.classList.remove('hidden');
+                buttonLoader.classList.add('hidden');
+                setTimeout(() => { statusMessage.textContent = '' }, 4000);
+            }
+        });
+        
+        const renderAdminProducts = (products) => {
+            productListLoader.classList.add('hidden');
+            productListContainer.innerHTML = '';
+            products.forEach(product => {
+                const totalStock = product.sizes ? Object.values(product.sizes).reduce((sum, s) => sum + s, 0) : product.stock;
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow-sm overflow-hidden flex flex-col';
+                card.innerHTML = `
+                    <img src="${product.imageUrl}" onerror="this.src='${product.errorUrl}'" class="h-48 w-full object-cover">
+                    <div class="p-4 flex flex-col flex-grow">
+                        <h4 class="font-semibold text-gray-800">${product.name}</h4>
+                        <p class="text-sm text-gray-500">Stok Total: ${totalStock}</p>
+                        <div class="mt-auto pt-4 flex gap-2">
+                            <button class="edit-btn flex-1 bg-secondary text-navy px-3 py-1.5 text-sm rounded-button hover:bg-blue-300 transition-colors" data-id="${product.id}">Edit</button>
+                            <button class="delete-btn flex-1 bg-red-500 text-white px-3 py-1.5 text-sm rounded-button hover:bg-red-600 transition-colors" data-id="${product.id}">Hapus</button>
+                        </div>
+                    </div>`;
+                productListContainer.appendChild(card);
+            });
+        };
+
+        db.collection('products').orderBy('name').onSnapshot(snapshot => {
+            const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderAdminProducts(products);
+        }, err => {
+            console.error("Error fetching products:", err);
+            productListLoader.innerHTML = '<p class="text-red-500">Gagal memuat produk.</p>';
+        });
+
+        productListContainer.addEventListener('click', (e) => {
+            const id = e.target.dataset.id;
+            if (e.target.classList.contains('delete-btn')) {
+                if (confirm('Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak bisa dibatalkan.')) {
+                    db.collection('products').doc(id).delete().then(() => alert('Produk berhasil dihapus.')).catch(err => alert(`Gagal menghapus produk: ${err.message}`));
+                }
+            }
+            if (e.target.classList.contains('edit-btn')) {
+                openEditModal(id);
+            }
+        });
+
+        const openEditModal = async (id) => {
+             const doc = await db.collection('products').doc(id).get();
+             if (!doc.exists) { alert("Produk tidak ditemukan!"); return; }
+             const product = { id: doc.id, ...doc.data() };
+             
+             editProductForm.innerHTML = `
+                <input type="hidden" id="edit-product-id" value="${product.id}">
+                <div><label for="edit-name" class="block font-medium">Nama</label><input type="text" id="edit-name" class="input-field" value="${product.name}" required></div>
+                <div><label for="edit-price" class="block font-medium">Harga</label><input type="number" id="edit-price" value="${product.price}" class="input-field" required></div>
+                <div><label class="block font-medium">URL Gambar</label><input type="url" id="edit-imageUrl" value="${product.imageUrl}" class="input-field mt-2"></div>
+                <div><label class="block font-medium">Kategori</label><div id="edit-category-checkboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div></div>
+                <div><label class="flex items-center"><input type="checkbox" id="edit-has-sizes" class="accent-accent mr-2" ${product.sizes ? 'checked' : ''}>Punya Ukuran?</label></div>
+                <div id="edit-size-stock-container" class="${product.sizes ? '' : 'hidden'} space-y-2 p-4 border rounded-md"><h4 class="font-medium">Stok Ukuran</h4><div class="grid grid-cols-2 gap-4"><div><label for="edit-sizeS">S</label><input type="number" id="edit-sizeS" value="${product.sizes?.S || 0}" class="input-field"></div><div><label for="edit-sizeM">M</label><input type="number" id="edit-sizeM" value="${product.sizes?.M || 0}" class="input-field"></div><div><label for="edit-sizeL">L</label><input type="number" id="edit-sizeL" value="${product.sizes?.L || 0}" class="input-field"></div><div><label for="edit-sizeXL">XL</label><input type="number" id="edit-sizeXL" value="${product.sizes?.XL || 0}" class="input-field"></div></div></div>
+                <div id="edit-single-stock-container" class="${product.sizes ? 'hidden' : ''}"><label for="edit-stock">Jumlah Stok</label><input type="number" id="edit-stock" value="${product.stock || 0}" class="input-field"></div>
+                <button type="submit" class="w-full bg-accent text-white font-bold py-3 rounded-button">Update Produk</button>
+             `;
+
+             const allCategories = ["Muslim Dresses", "T-Shirts", "Headscarves", "Accessories", "Sale"];
+             document.getElementById('edit-category-checkboxes').innerHTML = allCategories.map(cat => `<label class="flex items-center"><input type="checkbox" value="${cat}" class="accent-accent mr-2" ${product.category.includes(cat) ? 'checked' : ''}><span>${cat}</span></label>`).join('');
+             document.getElementById('edit-has-sizes').addEventListener('change', (e) => {
+                 document.getElementById('edit-size-stock-container').classList.toggle('hidden', !e.target.checked);
+                 document.getElementById('edit-single-stock-container').classList.toggle('hidden', e.target.checked);
+             });
+             editModal.classList.remove('hidden');
+        };
+
+        closeEditModalBtn.addEventListener('click', () => editModal.classList.add('hidden'));
+
+        editProductForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-product-id').value;
+            const submitButton = editProductForm.querySelector('button[type="submit"]');
+            submitButton.textContent = 'Updating...';
+            submitButton.disabled = true;
+
+            try {
+                const name = document.getElementById('edit-name').value;
+                let imageUrl = document.getElementById('edit-imageUrl').value;
+                if (!imageUrl) imageUrl = `https://placehold.co/400x500/f8f8f8/cccccc?text=${encodeURIComponent(name)}`;
+                
+                const updatedData = {
+                    name: name,
+                    price: parseInt(document.getElementById('edit-price').value),
+                    imageUrl: imageUrl,
+                    errorUrl: `https://placehold.co/400x500/f8f8f8/cccccc?text=${encodeURIComponent(name)}`,
+                    category: Array.from(document.querySelectorAll('#edit-category-checkboxes input:checked')).map(cb => cb.value)
+                };
+
+                if (document.getElementById('edit-has-sizes').checked) {
+                    updatedData.sizes = {
+                        S: parseInt(document.getElementById('edit-sizeS').value) || 0, M: parseInt(document.getElementById('edit-sizeM').value) || 0,
+                        L: parseInt(document.getElementById('edit-sizeL').value) || 0, XL: parseInt(document.getElementById('edit-sizeXL').value) || 0,
+                    };
+                    updatedData.stock = firebase.firestore.FieldValue.delete();
+                } else {
+                    updatedData.stock = parseInt(document.getElementById('edit-stock').value) || 0;
+                    updatedData.sizes = firebase.firestore.FieldValue.delete();
+                }
+                
+                await db.collection('products').doc(id).update(updatedData);
+                alert('Produk berhasil diupdate!');
+                editModal.classList.add('hidden');
+            } catch (error) {
+                alert(`Gagal mengupdate produk: ${error.message}`);
+            } finally {
+                 submitButton.textContent = 'Update Produk';
+                 submitButton.disabled = false;
+            }
+        });
+
+    </script>
+</body>
+</html>
